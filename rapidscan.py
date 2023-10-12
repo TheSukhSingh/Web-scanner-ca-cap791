@@ -1,18 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-#                               __         __
-#                              /__)_   '_/(  _ _
-#                             / ( (//)/(/__)( (//)
-#                                  /
-#
-# Author     : Shankar Narayana Damodaran
-# Tool       : RapidScan v1.2
-# Usage      : python3 rapidsan.py example.com
-# Description: This scanner automates the process of security scanning by using a
-#              multitude of available linux security tools and some custom scripts.
-#
-
-# Importing the libraries
 import sys
 import argparse
 import subprocess
@@ -27,8 +12,6 @@ from urllib.parse import urlsplit
 
 CURSOR_UP_ONE = '\x1b[1A' 
 ERASE_LINE = '\x1b[2K'
-
-# Scan Time Elapser
 intervals = (
     ('h', 3600),
     ('m', 60),
@@ -73,7 +56,6 @@ def check_internet():
     return val
 
 
-# Initializing the color module class
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -84,7 +66,7 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-    BG_ERR_TXT  = '\033[41m' # For critical errors and crashes
+    BG_ERR_TXT  = '\033[41m' 
     BG_HEAD_TXT = '\033[100m'
     BG_ENDL_TXT = '\033[46m'
     BG_CRIT_TXT = '\033[45m'
@@ -97,7 +79,6 @@ class bcolors:
     BG_SCAN_TXT_END   = '\x1b[0m'
 
 
-# Classifies the Vulnerability's Severity
 def vul_info(val):
     result =''
     if val == 'c':
@@ -112,12 +93,10 @@ def vul_info(val):
         result = bcolors.BG_INFO_TXT+" info "+bcolors.ENDC
     return result
 
-# Legends
 proc_high = bcolors.BADFAIL + "●" + bcolors.ENDC
 proc_med  = bcolors.WARNING + "●" + bcolors.ENDC
 proc_low  = bcolors.OKGREEN + "●" + bcolors.ENDC
 
-# Links the vulnerability with threat level and remediation database
 def vul_remed_info(v1,v2,v3):
     print(bcolors.BOLD+"Vulnerability Threat Level"+bcolors.ENDC)
     print("\t"+vul_info(v2)+" "+bcolors.WARNING+str(tool_resp[v1][0])+bcolors.ENDC)
@@ -127,7 +106,6 @@ def vul_remed_info(v1,v2,v3):
     print("\t"+bcolors.OKGREEN+str(tools_fix[v3-1][2])+bcolors.ENDC)
 
 
-# RapidScan Help Context
 def helper():
         print(bcolors.OKBLUE+"Information:"+bcolors.ENDC)
         print("------------")
@@ -154,28 +132,10 @@ def helper():
         print("\t"+vul_info('i')+"    : Not classified as a vulnerability, simply an useful informational alert to be considered.\n")
 
 
-# Clears Line
 def clear():
         sys.stdout.write("\033[F")
-        sys.stdout.write("\033[K") #clears until EOL
+        sys.stdout.write("\033[K")
 
-# RapidScan Logo
-def logo():
-    print(bcolors.WARNING)
-    logo_ascii = """
-                                  __         __
-                                 /__)_  """+bcolors.BADFAIL+" ●"+bcolors.WARNING+"""_/(  _ _
-                                / ( (//)/(/__)( (//)
-                                     /
-                     """+bcolors.ENDC+"""(The Multi-Tool Web Vulnerability Scanner)
-
-                     Check out our new software, """+bcolors.BG_LOW_TXT+"""NetBot"""+bcolors.ENDC+""" for simulating DDoS attacks - https://github.com/skavngr/netbot
-    """
-    print(logo_ascii)
-    print(bcolors.ENDC)
-
-
-# Initiliazing the idle loader/spinner class
 class Spinner:
     busy = False
     delay = 0.005 # 0.05
@@ -183,9 +143,6 @@ class Spinner:
     @staticmethod
     def spinning_cursor():
         while 1:
-            #for cursor in '|/-\\/': yield cursor #←↑↓→
-            #for cursor in '←↑↓→': yield cursor
-            #for cursor in '....scanning...please..wait....': yield cursor
             for cursor in ' ': yield cursor
     def __init__(self, delay=None):
         self.spinner_generator = self.spinning_cursor()
@@ -228,14 +185,8 @@ class Spinner:
             print("\n\t"+ bcolors.BG_ERR_TXT+"RapidScan received a series of Ctrl+C hits. Quitting..." +bcolors.ENDC)
             sys.exit(1)
 
-# End ofloader/spinner class
-
-# Instantiating the spinner/loader class
 spinner = Spinner()
 
-
-
-# Scanners that will be used and filename rotation (default: enabled (1))
 tool_names = [
                 #1
                 ["host","Host - Checks for existence of IPV6 address.","host",1],
@@ -482,7 +433,6 @@ tool_names = [
             ]
 
 
-# Command that is used to initiate the tool (with parameters and extra params)
 tool_cmd   = [
                 #1
                 ["host ",""],
@@ -729,7 +679,6 @@ tool_cmd   = [
             ]
 
 
-# Tool Responses (Begins) [Responses + Severity (c - critical | h - high | m - medium | l - low | i - informational) + Reference for Vuln Definition and Remediation]
 tool_resp   = [
                 #1
                 ["Does not have an IPv6 Address. It is good to have one.","i",1],
@@ -978,11 +927,6 @@ tool_resp   = [
 
             ]
 
-# Tool Responses (Ends)
-
-
-
-# Tool Status (Response Data + Response Code (if status check fails and you still got to push it + Legends + Approx Time + Tool Identification + Bad Responses)
 tool_status = [
                 #1
                 ["has IPv6",1,proc_low," < 15s","ipv6",["not found","has IPv6"]],
@@ -1394,7 +1338,7 @@ rs_avail_tools = 0
 rs_skipped_checks = 0
 
 if len(sys.argv) == 1:
-    logo()
+    
     helper()
     sys.exit(1)
 
@@ -1405,10 +1349,10 @@ if args_namespace.nospinner:
 
 if args_namespace.help or (not args_namespace.update \
     and not args_namespace.target):
-    logo()
+    
     helper()
 elif args_namespace.update:
-    logo()
+    
     print("RapidScan is updating....Please wait.\n")
     spinner.start()
     # Checking internet connectivity first...
@@ -1439,7 +1383,7 @@ elif args_namespace.target:
     os.system('rm /tmp/rapidscan* > /dev/null 2>&1') # Clearing previous scan files
     os.system('clear')
     os.system('setterm -cursor off')
-    logo()
+    
     print(bcolors.BG_HEAD_TXT+"[ Checking Available Security Scanning Tools Phase... Initiated. ]"+bcolors.ENDC)
 
     unavail_tools_names = list()
@@ -1521,7 +1465,6 @@ elif args_namespace.target:
                     if any(i in rs_tool_output_file for i in tool_status[tool][arg6]):
                         m = 1 # This does nothing.
                     else:
-                        #print "\t"+ vul_info(tool_resp[tool][arg2]) + bcolors.BADFAIL +" "+ tool_resp[tool][arg1] + bcolors.ENDC
                         vul_remed_info(tool,tool_resp[tool][arg2],tool_resp[tool][arg3])
                         rs_vul_list.append(tool_names[tool][arg1]+"*"+tool_names[tool][arg2])
         else:
@@ -1529,10 +1472,8 @@ elif args_namespace.target:
                 spinner.stop()
                 scan_stop = time.time()
                 elapsed = scan_stop - scan_start
-                rs_total_elapsed = rs_total_elapsed + elapsed
-                #sys.stdout.write(CURSOR_UP_ONE) 
+                rs_total_elapsed = rs_total_elapsed + elapsed 
                 sys.stdout.write(ERASE_LINE)
-                #print("-" * terminal_size(), end='\r', flush=True)
                 print(bcolors.OKBLUE+"\nScan Interrupted in "+display_time(int(elapsed))+bcolors.ENDC, end='\r', flush=True)
                 print("\n"+bcolors.WARNING + "\tTest Skipped. Performing Next. Press Ctrl+Z to Quit RapidScan.\n" + bcolors.ENDC)
                 rs_skipped_checks = rs_skipped_checks + 1
@@ -1541,8 +1482,6 @@ elif args_namespace.target:
 
     print(bcolors.BG_ENDL_TXT+"[ Preliminary Scan Phase Completed. ]"+bcolors.ENDC)
     print("\n")
-
-    #################### Report & Documentation Phase ###########################
     date = subprocess.Popen(["date", "+%Y-%m-%d"],stdout=subprocess.PIPE).stdout.read()[:-1].decode("utf-8")
     debuglog = "rs.dbg.%s.%s" % (target, date) 
     vulreport = "rs.vul.%s.%s" % (target, date)
@@ -1566,7 +1505,6 @@ elif args_namespace.target:
             print("\tComplete Vulnerability Report for "+bcolors.OKBLUE+target+bcolors.ENDC+" named "+bcolors.OKGREEN+vulreport+bcolors.ENDC+" is available under the same directory RapidScan resides.")
 
         report.close()
-    # Writing all scan files output into RS-Debug-ScanLog for debugging purposes.
     for file_index, file_name in enumerate(tool_names):
         with open(debuglog, "a") as report:
             try:
